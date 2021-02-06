@@ -1,6 +1,6 @@
 body {
     font: 14px "Century Gothic", Futura, sans-serif;
-    width: 350px;
+    width: 500px;
     margin: 20px auto;
   }
   
@@ -50,3 +50,28 @@ body {
     margin-left: 20px;
   }
   
+  .history-map {
+    width: 45px; 
+    height: 45px; 
+    background-color: lightskyblue;
+    margin-right: 10px;
+  }
+  
+  .cell {
+      width: 15px;
+      height: 15px;
+      float: left;
+      box-sizing: border-box;
+      border: 1px solid white;
+      text-align: center;
+      font-size: 11px;
+  }
+
+  .highlighted {
+      background-color: palegreen;
+  }
+  
+  .turns {
+      margin-bottom: 20px;
+      display: flex;
+  }

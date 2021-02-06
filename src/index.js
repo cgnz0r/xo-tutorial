@@ -12,7 +12,6 @@ function Square(props) {
 
 class Board extends React.Component {
     renderSquare(i) {
-        console.log(this.props.squares);
         return (
             <Square 
                 value = { this.props.squares[i] }
@@ -80,15 +79,43 @@ class Game extends React.Component {
         });
     }
 
+    renderState = (arrState, highlighted) => {
+        return (
+            <div>
+                <div className="board-row">
+                    <div className={0 === highlighted ? "highlighted cell" : "cell"}>{arrState[0] && arrState[0].toLowerCase() || ''}</div>
+                    <div className={1 === highlighted ? "highlighted cell" : "cell"}>{arrState[1] && arrState[1].toLowerCase() || ''}</div>
+                    <div className={2 === highlighted ? "highlighted cell" : "cell"}>{arrState[2] && arrState[2].toLowerCase() || ''}</div>
+                </div>
+                <div className="board-row">
+                    <div className={3 === highlighted ? "highlighted cell" : "cell"}>{arrState[3] && arrState[3].toLowerCase() || ''}</div>
+                    <div className={4 === highlighted ? "highlighted cell" : "cell"}>{arrState[4] && arrState[4].toLowerCase() || ''}</div>
+                    <div className={5 === highlighted ? "highlighted cell" : "cell"}>{arrState[5] && arrState[5].toLowerCase() || ''}</div>
+                </div>
+                <div className="board-row">
+                    <div className={6 === highlighted ? "highlighted cell" : "cell"}>{arrState[6] && arrState[6].toLowerCase() || ''}</div>
+                    <div className={7 === highlighted ? "highlighted cell" : "cell"}>{arrState[7] && arrState[7].toLowerCase() || ''}</div>
+                    <div className={8 === highlighted ? "highlighted cell" : "cell"}>{arrState[8] && arrState[8].toLowerCase() || ''}</div>
+                </div>
+            </div>
+        )
+    }
+
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calcWinner(current.squares);
 
         const moves = history.map((step, move) => {
-            const desc = move ? `Go to ${move} step` : 'Go to start of the game'
+            const currentArr = step.squares;
+            const previousArr = this.state.history[move - 1] 
+                            && this.state.history[move - 1].squares 
+                            || null;
+            const stepPosition = move ? getStepPosition(currentArr, previousArr) : null;
+            const desc = move ? `Go to step (${getNormalizedStepPosition(currentArr, previousArr)})` : 'Go to start of the game'
             return (
-                <li key = { move }>
+                <li key = { move } className="turns">
+                    <div className="history-map">{this.renderState(step.squares, stepPosition)}</div>
                     <button onClick = { () => this.jumpTo(move) }>{desc}</button>
                 </li>
             ) 
@@ -142,4 +169,49 @@ function calcWinner(squares) {
         } 
     }
     return null;
+}
+
+function getNormalizedStepPosition(arr1, arr2) {
+    getStepPosition(arr1, arr2);
+    const diffIdx = getStepPosition(arr1, arr2);
+    let column = null;
+    console.log(diffIdx);
+    switch ((diffIdx + 1) % 3) {
+        case 1: 
+            column = 1;
+            break;
+        case 2: 
+            column = 2; 
+            break;
+        case 3:
+        default: 
+            column = 3;
+            break;
+    }
+    let row = null;
+    switch (diffIdx) {
+        case 0:
+        case 1:
+        case 2:
+            row = 1;
+            break;
+        case 3:
+        case 4:
+        case 5:
+            row = 2;
+            break;
+        default: 
+            row = 3;
+            break;
+    }
+
+    return column + ", " + row;
+}
+
+function getStepPosition (arr1, arr2) {
+    let diffIdx = null;
+    arr1.forEach((el,idx) => {
+        if (el !== arr2[idx]) diffIdx = idx;
+    });
+    return diffIdx;
 }
